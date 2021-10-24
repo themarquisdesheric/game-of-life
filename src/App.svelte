@@ -1,18 +1,15 @@
 <script lang="ts">
-	type Row = string[]
-	
-	const rows: [Row, Row, Row, Row, Row] = [
-		['x', '', 'x', 'x', 'x'], 
-		['x', 'x', '', 'x', 'x'], 
-		['x', 'x', 'x', '', 'x'], 
-		['', 'x', 'x', 'x', ''], 
-		['x', '', 'x', '', 'x']
-	]
+	import type { GameBoard } from './global'
+	import { createGameBoardRows } from './utils'
+
+	const BOARD_LENGTH = 10
+
+	const gameBoard: GameBoard = createGameBoardRows(BOARD_LENGTH)
 </script>
 
 <main class="h-screen flex justify-center items-center text-center">
-	<div class="game-board grid grid-rows-5 grid-cols-5 gap-x-px gap-y-px">
-		{#each rows as row}
+	<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px">
+		{#each gameBoard as row}
 			{#each row as square}
 				<span class="square w-12 h-12" class:filled={square} />
 			{/each}
