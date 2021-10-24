@@ -1,30 +1,46 @@
 <script lang="ts">
-	export let name: string;
+	type Row = string[]
+	
+	const rows: [Row, Row, Row, Row, Row] = [
+		['x', 'x', 'x', 'x', 'x'], 
+		['x', 'x', 'x', 'x', 'x'], 
+		['x', 'x', 'x', 'x', 'x'], 
+		['x', 'x', 'x', 'x', 'x'], 
+		['x', 'x', 'x', 'x', 'x']
+	]
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<h1>The Game of Life</h1>
+	<div class="game-board">
+		{#each rows as row}
+			{#each row as square}
+				<span class="square">{square}</span>
+			{/each}
+		{/each}
+	</div>
 </main>
 
 <style>
 	main {
+		width: fit-content;
 		text-align: center;
 		padding: 1em;
-		max-width: 240px;
 		margin: 0 auto;
 	}
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+	.game-board {
+		display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
 	}
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	.square {
+		border: 1px solid;
+		margin-right: -1px;
+    margin-top: -1px;
+		width: 50px;
+		height: 50px;
+		line-height: 50px;;
 	}
 </style>
