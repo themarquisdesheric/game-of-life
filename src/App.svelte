@@ -1,20 +1,28 @@
 <script lang="ts">
 	import type { GameBoard } from './global'
-	import { createGameBoardRows } from './utils'
+	import { createGameBoardRows, updateGameBoard } from './utils'
 
-	const BOARD_LENGTH = 10
+	const BOARD_LENGTH = 12
+	const gameBoardRows: GameBoard = createGameBoardRows(BOARD_LENGTH)
 
-	const gameBoard: GameBoard = createGameBoardRows(BOARD_LENGTH)
+	$: gameBoard = gameBoardRows
+
+	const processNextTick = () => {
+		gameBoard = updateGameBoard(gameBoard)
+	}
 </script>
 
-<main class="h-screen flex justify-center items-center text-center">
+<main class="h-screen flex flex-col justify-center items-center text-center">
 	<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px">
 		{#each gameBoard as row}
-			{#each row as square}
-				<span class="square w-12 h-12" class:filled={square} />
+			{#each row as cell}
+				<span class="cell w-12 h-12" class:filled={cell} />
 			{/each}
 		{/each}
 	</div>
+	<button on:click={processNextTick} class="mt-8 p-4 border rounded-2xl">
+		Commence evolution
+	</button>
 </main>
 
 <style global>
@@ -29,11 +37,11 @@
 		width: fit-content;
 	}
 
-	.square {
+	.cell {
 		line-height: 3rem;
 	}
 
-	.square.filled {
+	.cell.filled {
 		background-color: #000;
 	}
 </style>
