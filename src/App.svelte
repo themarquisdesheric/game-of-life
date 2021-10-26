@@ -1,15 +1,51 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte'
 	import type { GameBoard } from './global'
-	import { createGameBoardRows, updateGameBoard } from './utils'
+	import { createGameBoard, updateGameBoard } from './utils'
 
 	const BOARD_LENGTH = 12
-	const gameBoardRows: GameBoard = createGameBoardRows(BOARD_LENGTH)
+	const initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
+	let evolutionStopped = false
+	let generations = 0
+	let interval
 
-	$: gameBoard = gameBoardRows
+	$: gameBoard = initialGameBoard
 
-	const processNextTick = () => {
-		gameBoard = updateGameBoard(gameBoard)
+	const startInterval = () =>
+		(interval = setInterval(processNextTick, 500))
+	
+	const stopInterval = () => {
+		clearInterval(interval)
+		evolutionStopped = true
 	}
+
+	const replayEvolution = () => {
+		gameBoard = initialGameBoard
+		evolutionStopped = false
+		generations = 0
+		startInterval()
+	}
+	
+	const processNextTick = () => {
+		const newGameBoard = updateGameBoard(gameBoard)
+		
+		if (newGameBoard.toString() === gameBoard.toString()) {
+			stopInterval()
+		}
+
+		generations += 1
+		gameBoard = newGameBoard
+	}
+
+	const buttonAttributes: [string, () => void][] = [
+		['start evolution', startInterval],
+		['stop evolution', stopInterval],
+		['replay evolution', replayEvolution]
+	]
+
+	startInterval()
+
+	onDestroy(() => clearInterval(interval))
 </script>
 
 <main class="h-screen flex flex-col justify-center items-center text-center">
@@ -20,9 +56,24 @@
 			{/each}
 		{/each}
 	</div>
-	<button on:click={processNextTick} class="mt-8 p-4 border rounded-2xl">
-		Commence evolution
-	</button>
+
+	{#if evolutionStopped}
+		<p class="mt-8">This experiment survived {generations} generations</p>
+	{:else}
+		<p class="mt-8">Generations: {generations}</p>
+	{/if}
+	
+	<div>
+		{#each buttonAttributes as [label, handler], i}
+			<button
+				on:click={handler}
+				class="mt-8 p-4 border rounded-2xl"
+				class:mr-2={i < buttonAttributes.length - 1}
+			>
+				{label}
+			</button>
+		{/each}
+	</div>
 </main>
 
 <style global>

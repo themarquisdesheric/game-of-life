@@ -10,7 +10,7 @@ const isAlive = () =>
 const createRow = (length: number) => 
   new Array(length).fill(false).map(isAlive)
 
-export const createGameBoardRows = (length = 5) =>
+export const createGameBoard = (length = 5) =>
   new Array(length).fill(false).map(() => createRow(length))
 
 // ================================================================================================= board updating logic =================================================================================================
