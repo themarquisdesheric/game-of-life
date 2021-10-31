@@ -1,51 +1,58 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte'
+	import { interval } from './stores'
 	import type { GameBoard } from './global'
 	import { createGameBoard, updateGameBoard } from './utils'
 
 	const BOARD_LENGTH = 12
 	const initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
 	let evolutionStopped = false
-	let generations = 0
-	let interval
+	let evolutionPaused = false
+	let generations = 1
 
 	$: gameBoard = initialGameBoard
 
-	const startInterval = () =>
-		(interval = setInterval(processNextTick, 500))
+	const startInterval = () => {
+		evolutionStopped = false
+		evolutionPaused = false
+		
+		interval.update((oldInterval: NodeJS.Timer) => {
+			clearInterval(oldInterval)
+			
+			return setInterval(processNextTick, 500)
+		})
+	}
 	
-	const stopInterval = () => {
-		clearInterval(interval)
-		evolutionStopped = true
+	const pauseEvolution = () => {
+		evolutionPaused = true
+
+		clearInterval($interval)
 	}
 
 	const replayEvolution = () => {
 		gameBoard = initialGameBoard
-		evolutionStopped = false
-		generations = 0
-		startInterval()
+		generations = 1
+
+		startInterval()	
 	}
 	
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
 		
 		if (newGameBoard.toString() === gameBoard.toString()) {
-			stopInterval()
+			evolutionStopped = true
+
+			pauseEvolution()
+			return
 		}
 
 		generations += 1
 		gameBoard = newGameBoard
 	}
 
-	const buttonAttributes: [string, () => void][] = [
-		['start evolution', startInterval],
-		['stop evolution', stopInterval],
-		['replay evolution', replayEvolution]
-	]
-
 	startInterval()
 
-	onDestroy(() => clearInterval(interval))
+	onDestroy(() => clearInterval($interval))
 </script>
 
 <main class="h-screen flex flex-col justify-center items-center text-center">
@@ -57,22 +64,33 @@
 		{/each}
 	</div>
 
-	{#if evolutionStopped}
-		<p class="mt-8">This experiment survived {generations} generations</p>
-	{:else}
-		<p class="mt-8">Generations: {generations}</p>
-	{/if}
+	<p class="mt-8">
+		{evolutionStopped ? 'This experiment survived ' : ''}
+		{generations} generation{generations > 1 ? 's' : ''}
+	</p>
 	
 	<div>
-		{#each buttonAttributes as [label, handler], i}
+		{#if evolutionPaused}
 			<button
-				on:click={handler}
-				class="mt-8 p-4 border rounded-2xl"
-				class:mr-2={i < buttonAttributes.length - 1}
+				on:click={startInterval}
+				class="mt-8 mr-2 p-4 border rounded-2xl"
 			>
-				{label}
+				start evolution
 			</button>
-		{/each}
+		{:else}
+			<button
+				on:click={pauseEvolution}
+				class="mt-8 mr-2 p-4 border rounded-2xl"
+			>
+				stop evolution
+			</button>
+		{/if}
+		<button
+			on:click={replayEvolution}
+			class="mt-8 p-4 border rounded-2xl"
+		>
+			replay evolution
+		</button>
 	</div>
 </main>
 
