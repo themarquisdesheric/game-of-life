@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
-	import { GameBoard, Cell } from './global'
 	import { createGameBoard, updateGameBoard } from './utils'
+	import type { GameBoard } from './global'
+	import { Cell } from './enums'
 
 	const BOARD_LENGTH = 12
 	const initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)

@@ -1,5 +1,5 @@
 import type { GameBoard, Row } from './global'
-import { Cell } from './global'
+import { Cell } from './enums'
 
 // ================================================================================================= board creation utils =================================================================================================
 
@@ -99,7 +99,7 @@ export const updateGameBoard = (prevGameBoard: GameBoard) => {
         }
         
         if (neighborCount === 2 || neighborCount === 3) {
-          console.log('any live cell with two or three live neighbours lives on to the next generation')
+          console.log('😀 any live cell with two or three live neighbours lives on to the next generation')
           newGameBoard[y][x] = Cell.survivor
         }
         // cell is dead
