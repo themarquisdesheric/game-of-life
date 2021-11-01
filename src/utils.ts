@@ -1,4 +1,5 @@
-import { GameBoard, Cell } from './global'
+import type { GameBoard, Row } from './global'
+import { Cell } from './global'
 
 // ================================================================================================= board creation utils =================================================================================================
 
@@ -17,7 +18,17 @@ export const createGameBoard = (length = 5) =>
 const isAlive = (cell: Cell) =>
   cell !== Cell.dead && cell !== Cell.empty
 
-const getNeighborCountFromRow = ({ row, targetCellIndex, rowIncludesTargetCell = false }) => {
+type getNeighborCountFromRowArgs = {
+  row: Row,
+  targetCellIndex: number,
+  rowIncludesTargetCell: boolean
+}
+
+const getNeighborCountFromRow = ({
+  row,
+  targetCellIndex,
+  rowIncludesTargetCell = false
+}: getNeighborCountFromRowArgs) => {
   let neighborCount = 0;
 
   for (let i = targetCellIndex - 1; i <= targetCellIndex + 1; i++) {
@@ -36,11 +47,17 @@ const getNeighborCountFromRow = ({ row, targetCellIndex, rowIncludesTargetCell =
   return neighborCount
 }
 
+type getNeighborCountArgs = {
+  gameBoard: GameBoard,
+  y: number,
+  x: number
+}
+
 const getNeighborCount = ({
   gameBoard,
   y: targetRowIndex,
   x: targetCellIndex,
-}) => {
+}: getNeighborCountArgs) => {
   let neighborCount = 0;
   // loop over rows immediately surrounding the target cell 
   for (let i = -1; i <= 1; i++) {
