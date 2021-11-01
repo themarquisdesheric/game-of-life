@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
-	import type { GameBoard } from './global'
+	import { GameBoard, Cell } from './global'
 	import { createGameBoard, updateGameBoard } from './utils'
 
 	const BOARD_LENGTH = 12
@@ -38,7 +38,7 @@
 	
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
-		
+
 		if (newGameBoard.toString() === gameBoard.toString()) {
 			evolutionStopped = true
 
@@ -59,31 +59,40 @@
 	<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px">
 		{#each gameBoard as row}
 			{#each row as cell}
-				<span class="cell w-12 h-12" class:filled={cell} />
+				<span
+					class="cell w-12 h-12 text-5xl"
+					class:opacity-25={cell === Cell.dead}
+				>
+					{#if cell}
+						{cell}
+					{/if}
+				</span>
 			{/each}
 		{/each}
 	</div>
 
-	<p class="mt-8">
+	<p class="mt-8" class:font-bold={evolutionStopped}>
 		{evolutionStopped ? 'This experiment survived ' : ''}
 		{generations} generation{generations > 1 ? 's' : ''}
 	</p>
 	
 	<div>
-		{#if evolutionPaused}
-			<button
-				on:click={startInterval}
-				class="mt-8 mr-2 p-4 border rounded-2xl"
-			>
-				start evolution
-			</button>
-		{:else}
-			<button
-				on:click={pauseEvolution}
-				class="mt-8 mr-2 p-4 border rounded-2xl"
-			>
-				stop evolution
-			</button>
+		{#if !evolutionStopped}
+			{#if evolutionPaused}
+				<button
+					on:click={startInterval}
+					class="mt-8 mr-2 p-4 border rounded-2xl"
+				>
+					start evolution
+				</button>
+			{:else}
+				<button
+					on:click={pauseEvolution}
+					class="mt-8 mr-2 p-4 border rounded-2xl"
+				>
+					stop evolution
+				</button>
+			{/if}
 		{/if}
 		<button
 			on:click={replayEvolution}

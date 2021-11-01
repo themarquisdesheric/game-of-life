@@ -1,26 +1,27 @@
-import type { GameBoard } from './global'
+import { GameBoard, Cell } from './global'
 
 // ================================================================================================= board creation utils =================================================================================================
 
 const CHANCES_OF_LIFE = 0.3
-
-const isAlive = () =>
-  Math.random() <= CHANCES_OF_LIFE
+const populateCell = () =>
+  (Math.random() <= CHANCES_OF_LIFE) ? Cell.new : Cell.empty
 
 const createRow = (length: number) => 
-  new Array(length).fill(false).map(isAlive)
+  new Array(length).fill(Cell.empty).map(populateCell)
 
 export const createGameBoard = (length = 5) =>
-  new Array(length).fill(false).map(() => createRow(length))
+  new Array(length).fill(Cell.empty).map(() => createRow(length))
 
 // ================================================================================================= board updating logic =================================================================================================
+
+const isAlive = (cell: Cell) =>
+  cell !== Cell.dead && cell !== Cell.empty
 
 const getNeighborCountFromRow = ({ row, targetCellIndex, rowIncludesTargetCell = false }) => {
   let neighborCount = 0;
 
   for (let i = targetCellIndex - 1; i <= targetCellIndex + 1; i++) {
-    // current cell is alive
-    if (row[i]) {
+    if (isAlive(row[i])) {
       if (rowIncludesTargetCell) {
         // and is not target cell
         if (i !== targetCellIndex) {
@@ -68,26 +69,31 @@ export const updateGameBoard = (prevGameBoard: GameBoard) => {
         y,
         x
       })
-      // cell is alive
-      if (prevGameBoard[y][x]) {
+      
+      if (isAlive(prevGameBoard[y][x])) {
         if (neighborCount < 2) {
-          console.log('any live cell with fewer than two live neighbours dies, as if by underpopulation')
-          newGameBoard[y][x] = false
+          console.log('💀 any live cell with fewer than two live neighbours dies, as if by underpopulation')
+          newGameBoard[y][x] = Cell.dead
         }
 
         if (neighborCount > 3) {
-          console.log('any live cell with more than three live neighbours dies, as if by overpopulation')
-          newGameBoard[y][x] = false
+          console.log('💀 any live cell with more than three live neighbours dies, as if by overpopulation')
+          newGameBoard[y][x] = Cell.dead
         }
         
         if (neighborCount === 2 || neighborCount === 3) {
           console.log('any live cell with two or three live neighbours lives on to the next generation')
+          newGameBoard[y][x] = Cell.survivor
         }
         // cell is dead
       } else {
         if (neighborCount === 3) {
-          console.log('any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction')
-          newGameBoard[y][x] = true
+          console.log('🐣 any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction')
+          newGameBoard[y][x] = Cell.new
+        }
+
+        if (newGameBoard[y][x] === Cell.dead) {
+          newGameBoard[y][x] = Cell.empty
         }
       }
     })

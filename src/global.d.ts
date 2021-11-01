@@ -1,4 +1,11 @@
 /// <reference types="svelte" />
 
-export type Row = boolean[]
+export enum Cell {
+  dead = '💀',
+  new = '🐣',
+  survivor = '😀',
+  empty = ''
+}
+
+export type Row = Cell[]
 export type GameBoard = Row[]
