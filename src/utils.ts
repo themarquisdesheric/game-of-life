@@ -16,7 +16,9 @@ export const createGameBoard = (length = 5) =>
 // ================================================================================================= board updating logic =================================================================================================
 
 const isAlive = (cell: Cell) =>
-  cell !== Cell.dead && cell !== Cell.empty
+  cell !== Cell.dead &&
+  cell !== Cell.empty &&
+  cell !== undefined
 
 type getNeighborCountFromRowArgs = {
   row: Row,
