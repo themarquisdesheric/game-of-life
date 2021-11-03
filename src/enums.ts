@@ -1,6 +1,8 @@
-export enum Cell {
+export enum Emojis {
+  baby = '👶🏻',
+  man = '👨🏻',
+  old = '👴🏻',
+  wizard = '🧙‍♂️',
   dead = '💀',
-  new = '🐣',
-  survivor = '😀',
-  empty = ''
+  empty = '',
 }

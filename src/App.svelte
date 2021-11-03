@@ -1,9 +1,10 @@
 <script lang="ts">
+	import _isEqual from 'lodash.isequal'
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
 	import { createGameBoard, updateGameBoard } from './utils'
 	import type { GameBoard } from './global'
-	import { Cell } from './enums'
+	import { Emojis } from './enums'
 
 	const BOARD_LENGTH = 12
 	const initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
@@ -40,7 +41,7 @@
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
 
-		if (newGameBoard.toString() === gameBoard.toString()) {
+		if (_isEqual(newGameBoard, gameBoard)) {
 			evolutionStopped = true
 
 			pauseEvolution()
@@ -62,10 +63,10 @@
 			{#each row as cell}
 				<span
 					class="cell w-12 h-12 text-5xl"
-					class:opacity-25={cell === Cell.dead}
-				>
-					{#if cell}
-						{cell}
+					class:opacity-25={cell.emoji === Emojis.dead}
+					>
+					{#if cell.emoji}
+						{cell.emoji}
 					{/if}
 				</span>
 			{/each}

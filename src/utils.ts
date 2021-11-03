@@ -1,24 +1,46 @@
-import type { GameBoard, Row } from './global'
-import { Cell } from './enums'
+import type { GameBoard, Row, Cell } from './global'
+import { Emojis } from './enums'
 
 // ================================================================================================= board creation utils =================================================================================================
 
 const CHANCES_OF_LIFE = 0.3
+
+const createNewCell = () => ({
+  emoji: Emojis.baby,
+  ageInGenerations: 1,
+})
+
+const createEmptyCell = () => ({
+  emoji: Emojis.empty,
+  ageInGenerations: 0,
+})
+
+const createDeadCell = () => ({
+  emoji: Emojis.dead,
+  ageInGenerations: 0,
+})
+
 const populateCell = () =>
-  (Math.random() <= CHANCES_OF_LIFE) ? Cell.new : Cell.empty
+  (Math.random() <= CHANCES_OF_LIFE)
+    ? createNewCell()
+    : createEmptyCell()
 
 const createRow = (length: number) => 
-  new Array(length).fill(Cell.empty).map(populateCell)
+  new Array(length)
+    .fill(createEmptyCell())
+    .map(populateCell)
 
 export const createGameBoard = (length = 5) =>
-  new Array(length).fill(Cell.empty).map(() => createRow(length))
+  new Array(length)
+    .fill(createEmptyCell())
+    .map(() => createRow(length))
 
 // ================================================================================================= board updating logic =================================================================================================
 
-const isAlive = (cell: Cell) =>
-  cell !== Cell.dead &&
-  cell !== Cell.empty &&
-  cell !== undefined
+export const isAlive = (cell: Cell) =>
+  cell !== undefined &&
+  cell.emoji !== Emojis.dead &&
+  cell.emoji !== Emojis.empty
 
 type getNeighborCountFromRowArgs = {
   row: Row,
@@ -78,8 +100,18 @@ const getNeighborCount = ({
   return neighborCount
 }
 
+const updateSurvivorEmoji = (ageInGenerations: number) => {
+  if (ageInGenerations < 3) return Emojis.baby
+  if (ageInGenerations < 8) return Emojis.man
+  if (ageInGenerations < 13) return Emojis.old
+  
+  return Emojis.wizard
+}
+
 export const updateGameBoard = (prevGameBoard: GameBoard) => {
-  const newGameBoard: GameBoard = prevGameBoard.map(row => [...row])
+  const newGameBoard: GameBoard = prevGameBoard.map(row =>
+    row.map(cell => ({ ...cell }))
+  )
 
   prevGameBoard.forEach((row, y) => {
     row.forEach((_, x) => {
@@ -91,28 +123,33 @@ export const updateGameBoard = (prevGameBoard: GameBoard) => {
       
       if (isAlive(prevGameBoard[y][x])) {
         if (neighborCount < 2) {
-          console.log('💀 any live cell with fewer than two live neighbours dies, as if by underpopulation')
-          newGameBoard[y][x] = Cell.dead
+          // 💀 any live cell with fewer than two live neighbours dies, as if by underpopulation
+          newGameBoard[y][x] = createDeadCell()
         }
 
         if (neighborCount > 3) {
-          console.log('💀 any live cell with more than three live neighbours dies, as if by overpopulation')
-          newGameBoard[y][x] = Cell.dead
+          // 💀 any live cell with more than three live neighbours dies, as if by overpopulation
+          newGameBoard[y][x] = createDeadCell()
         }
         
         if (neighborCount === 2 || neighborCount === 3) {
-          console.log('😀 any live cell with two or three live neighbours lives on to the next generation')
-          newGameBoard[y][x] = Cell.survivor
+          // 😀 any live cell with two or three live neighbours lives on to the next generation
+          const ageInGenerations = prevGameBoard[y][x].ageInGenerations + 1
+
+          newGameBoard[y][x] = {
+            emoji: updateSurvivorEmoji(ageInGenerations),
+            ageInGenerations,
+          }
         }
         // cell is dead
       } else {
         if (neighborCount === 3) {
-          console.log('🐣 any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction')
-          newGameBoard[y][x] = Cell.new
+          // 🐣 any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction
+          newGameBoard[y][x] = createNewCell()
         }
 
-        if (newGameBoard[y][x] === Cell.dead) {
-          newGameBoard[y][x] = Cell.empty
+        if (newGameBoard[y][x].emoji === Emojis.dead) {
+          newGameBoard[y][x].emoji = Emojis.empty
         }
       }
     })
