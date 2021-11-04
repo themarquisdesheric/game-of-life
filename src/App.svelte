@@ -13,33 +13,9 @@
 
 	$: gameBoard = initialGameBoard
 
-	const startInterval = () => {
-		evolutionOver = false
-		evolutionPaused = false
-		
-		interval.update((oldInterval: NodeJS.Timer) => {
-			clearInterval(oldInterval)
-			
-			return setInterval(processNextTick, 500)
-		})
-	}
-	
-	const pauseEvolution = () => {
-		evolutionPaused = true
-
-		clearInterval($interval)
-	}
-
-	const replayEvolution = () => {
-		gameBoard = initialGameBoard
-		generations = 1
-
-		startInterval()	
-	}
-	
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
-
+		// evolution has ended when gameboards cease to differ
 		if (isEvolutionOver(newGameBoard, gameBoard)) {
 			evolutionOver = true
 
@@ -51,7 +27,27 @@
 		gameBoard = newGameBoard
 	}
 
-	startInterval()
+	const startEvolution = () => {
+		evolutionOver = false
+		evolutionPaused = false
+		
+		interval.startInterval(processNextTick)
+	}
+
+	const replayEvolution = () => {
+		gameBoard = initialGameBoard
+		generations = 1
+		
+		startEvolution()
+	}
+	
+	const pauseEvolution = () => {
+		evolutionPaused = true
+
+		clearInterval($interval)
+	}
+
+	startEvolution()
 
 	onDestroy(() => clearInterval($interval))
 </script>
@@ -81,7 +77,7 @@
 		{#if !evolutionOver}
 			{#if evolutionPaused}
 				<button
-					on:click={startInterval}
+					on:click={startEvolution}
 					class="mt-8 mr-2 p-4 border rounded-2xl"
 				>
 					start evolution

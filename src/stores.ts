@@ -1,3 +1,18 @@
 import { writable } from 'svelte/store'
 
-export const interval = writable(setInterval(() => {}))
+const createInterval = () => {
+	const { subscribe, update } = writable(setInterval(() => {}))
+
+	return {
+		subscribe,
+		startInterval: (processNextTick: () => void) => {
+      update((oldInterval: NodeJS.Timer) => {
+        clearInterval(oldInterval)
+        
+        return setInterval(processNextTick, 500)
+      })
+    }
+	}
+}
+
+export const interval = createInterval()
