@@ -1,42 +1,7 @@
 import _isEqual from 'lodash.isequal'
-import type { GameBoard, Row, Cell } from './global'
-import { Emojis } from './enums'
-
-// ================================================================================================= board creation utils =================================================================================================
-
-const CHANCES_OF_LIFE = 0.3
-
-const createNewCell = () => ({
-  emoji: Emojis.baby,
-  ageInGenerations: 1,
-})
-
-const createEmptyCell = () => ({
-  emoji: Emojis.empty,
-  ageInGenerations: 0,
-})
-
-const createDeadCell = () => ({
-  emoji: Emojis.dead,
-  ageInGenerations: 0,
-})
-
-const populateCell = () =>
-  (Math.random() <= CHANCES_OF_LIFE)
-    ? createNewCell()
-    : createEmptyCell()
-
-const createRow = (length: number) => 
-  new Array(length)
-    .fill(createEmptyCell())
-    .map(populateCell)
-
-export const createGameBoard = (length = 5) =>
-  new Array(length)
-    .fill(createEmptyCell())
-    .map(() => createRow(length))
-
-// ================================================================================================= board updating logic =================================================================================================
+import type { GameBoard, Row, Cell } from '../global'
+import { Emojis } from '../enums'
+import { createNewCell, createDeadCell } from './boardCreation'
 
 export const isAlive = (cell: Cell) =>
   cell !== undefined &&
