@@ -1,3 +1,4 @@
+import _isEqual from 'lodash.isequal'
 import type { GameBoard, Row, Cell } from './global'
 import { Emojis } from './enums'
 
@@ -101,9 +102,9 @@ const getNeighborCount = ({
 }
 
 const updateSurvivorEmoji = (ageInGenerations: number) => {
-  if (ageInGenerations < 3) return Emojis.baby
-  if (ageInGenerations < 8) return Emojis.man
-  if (ageInGenerations < 13) return Emojis.old
+  if (ageInGenerations <= 5) return Emojis.baby
+  if (ageInGenerations <= 10) return Emojis.man
+  if (ageInGenerations <= 15) return Emojis.old
   
   return Emojis.wizard
 }
@@ -156,4 +157,18 @@ export const updateGameBoard = (prevGameBoard: GameBoard) => {
   })
 
   return newGameBoard
+}
+
+const removeAgeInGenerations = (gameBoard: GameBoard) =>
+  gameBoard.map(row =>
+    row.map(cell => ({
+      emoji: cell.emoji
+    })
+  ))
+
+export const isEvolutionOver = (gameboardA: GameBoard, gameboardB: GameBoard) => {
+  const gameBoardAWithoutAgeInGenerations = removeAgeInGenerations(gameboardA)
+  const gameBoardBWithoutAgeInGenerations = removeAgeInGenerations(gameboardB)
+
+  return _isEqual(gameBoardAWithoutAgeInGenerations, gameBoardBWithoutAgeInGenerations)
 }

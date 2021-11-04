@@ -1,21 +1,20 @@
 <script lang="ts">
-	import _isEqual from 'lodash.isequal'
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
-	import { createGameBoard, updateGameBoard } from './utils'
+	import { createGameBoard, updateGameBoard, isEvolutionOver } from './utils'
 	import type { GameBoard } from './global'
 	import { Emojis } from './enums'
 
 	const BOARD_LENGTH = 12
 	const initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
-	let evolutionStopped = false
+	let evolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
 
 	$: gameBoard = initialGameBoard
 
 	const startInterval = () => {
-		evolutionStopped = false
+		evolutionOver = false
 		evolutionPaused = false
 		
 		interval.update((oldInterval: NodeJS.Timer) => {
@@ -41,8 +40,8 @@
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
 
-		if (_isEqual(newGameBoard, gameBoard)) {
-			evolutionStopped = true
+		if (isEvolutionOver(newGameBoard, gameBoard)) {
+			evolutionOver = true
 
 			pauseEvolution()
 			return
@@ -73,13 +72,13 @@
 		{/each}
 	</div>
 
-	<p class="mt-8" class:font-bold={evolutionStopped}>
-		{evolutionStopped ? 'This experiment survived ' : ''}
+	<p class="mt-8" class:font-bold={evolutionOver}>
+		{evolutionOver ? 'This experiment survived ' : ''}
 		{generations} generation{generations > 1 ? 's' : ''}
 	</p>
 	
 	<div>
-		{#if !evolutionStopped}
+		{#if !evolutionOver}
 			{#if evolutionPaused}
 				<button
 					on:click={startInterval}
