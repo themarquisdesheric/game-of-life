@@ -2,7 +2,7 @@
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
 	import Button from './components/Button.svelte'
-	import { createGameBoard, updateGameBoard, isEvolutionOver } from './utils'
+	import { createGameBoard, updateGameBoard, isEvolutionOver, getBackgroundColor } from './utils'
 	import type { GameBoard } from './global'
 	import { Emojis } from './enums'
 
@@ -60,6 +60,7 @@
 				<span
 					class="cell w-12 h-12 text-5xl"
 					class:opacity-50={cell.emoji === Emojis.dead}
+					style="background-color: {getBackgroundColor(cell.emoji)}"
 				>
 					{#if cell.emoji}
 						{cell.emoji}
@@ -95,10 +96,6 @@
 <style global>
   @tailwind base;
   @tailwind utilities;
-
-	:global(body) {
-		background-color: #aaa;
-	}
 	
 	.game-board {
 		width: fit-content;
@@ -106,9 +103,5 @@
 
 	.cell {
 		line-height: 3rem;
-	}
-
-	.cell.filled {
-		background-color: #000;
 	}
 </style>
