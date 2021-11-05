@@ -7,7 +7,7 @@
 	import { Emojis } from './enums'
 
 	const BOARD_LENGTH = 12
-	const initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
+	let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
 	let evolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
@@ -35,11 +35,17 @@
 		interval.startInterval(processNextTick)
 	}
 
-	const replayEvolution = () => {
+	const restartEvolution = () => {
 		gameBoard = initialGameBoard
 		generations = 1
 		
 		startEvolution()
+	}
+	
+	const newEvolution = () => {
+		initialGameBoard = createGameBoard(BOARD_LENGTH)
+
+		restartEvolution()
 	}
 	
 	const pauseEvolution = () => {
@@ -87,8 +93,11 @@
 				</Button>
 			{/if}
 		{/if}
-		<Button onClick={replayEvolution} classes="mr-0">
+		<Button onClick={restartEvolution}>
 			replay evolution
+		</Button>
+		<Button onClick={newEvolution} classes="mr-0">
+			new evolution
 		</Button>
 	</div>
 </main>
