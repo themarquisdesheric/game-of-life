@@ -1,10 +1,10 @@
 import { Emojis } from '../enums'
 
 const colors = {
-  [Emojis.baby]: '#01a2e1',
-  [Emojis.man]: '#9b3ce9',
-  [Emojis.old]: '#fad20b',
-  [Emojis.wizard]: '#fd3a3a',
+  [Emojis.baby]: 'bg-blue-400',
+  [Emojis.man]: 'bg-purple-400',
+  [Emojis.old]: 'bg-green-400',
+  [Emojis.wizard]: 'bg-pink-400',
   [Emojis.dead]: '',
   [Emojis.empty]: '',
 }
