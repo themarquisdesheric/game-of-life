@@ -1,11 +1,18 @@
 <script lang="ts">
 	export let onClick: () => void
-  export let classes = 'mr-2'
+  export let classes = ''
 </script>
 
 <button
   on:click={onClick}
-  class="mt-8 p-4 border rounded-2xl bg-gray-200 {classes}"
+  class="mr-2 p-2 border rounded-2xl bg-gray-200 {classes}"
 >
   <slot></slot>
 </button>
+
+<style>
+  button {
+    width: 107px;
+    font-size: 0.75rem;
+  }
+</style>

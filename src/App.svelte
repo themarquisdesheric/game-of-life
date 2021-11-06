@@ -2,6 +2,10 @@
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
 	import Button from './components/Button.svelte'
+	import PlayIcon from './components/PlayIcon.svelte'
+	import PauseIcon from './components/PauseIcon.svelte'
+	import RestartIcon from './components/RestartIcon.svelte'
+	import NewIcon from './components/NewIcon.svelte'
 	import { createGameBoard, updateGameBoard, isEvolutionOver, getBackgroundColor } from './utils'
 	import type { GameBoard } from './global'
 	import { Emojis } from './enums'
@@ -28,24 +32,24 @@
 		gameBoard = newGameBoard
 	}
 
-	const startEvolution = () => {
+	const playEvolution = () => {
 		evolutionOver = false
 		evolutionPaused = false
 		
 		interval.startInterval(processNextTick)
 	}
 
-	const restartEvolution = () => {
+	const replayEvolution = () => {
 		gameBoard = initialGameBoard
 		generations = 1
 		
-		startEvolution()
+		playEvolution()
 	}
 	
 	const newEvolution = () => {
 		initialGameBoard = createGameBoard(BOARD_LENGTH)
 
-		restartEvolution()
+		replayEvolution()
 	}
 	
 	const pauseEvolution = () => {
@@ -54,12 +58,12 @@
 		clearInterval($interval)
 	}
 
-	startEvolution()
+	playEvolution()
 
 	onDestroy(() => clearInterval($interval))
 </script>
 
-<main class="h-screen flex flex-col justify-center items-center text-center bg-gray-800">
+<main class="min-h-screen flex flex-col justify-center items-center text-center bg-gray-800">
 	<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px rounded-3xl p-12 bg-gray-200">
 		{#each gameBoard as row}
 			{#each row as cell}
@@ -81,23 +85,27 @@
 		{generations} generation{generations > 1 ? 's' : ''}
 	</p>
 	
-	<div>
+	<div class="my-8">
 		{#if !evolutionOver}
 			{#if evolutionPaused}
-				<Button onClick={startEvolution}>
-					start evolution
+				<Button onClick={playEvolution}>
+					<PlayIcon />&nbsp;
+					play
 				</Button>
 			{:else}
 				<Button onClick={pauseEvolution}>
-					stop evolution
+					<PauseIcon />&nbsp;
+					pause
 				</Button>
 			{/if}
 		{/if}
-		<Button onClick={restartEvolution}>
-			replay evolution
+		<Button onClick={replayEvolution}>
+			<RestartIcon />&nbsp;
+			replay
 		</Button>
 		<Button onClick={newEvolution} classes="mr-0">
-			new evolution
+			<NewIcon />
+			new
 		</Button>
 	</div>
 </main>
@@ -112,5 +120,10 @@
 
 	.cell {
 		line-height: 3rem;
+	}
+
+	svg {
+		width: 1rem;
+    display: inline-block;
 	}
 </style>
