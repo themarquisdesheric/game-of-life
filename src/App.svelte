@@ -4,12 +4,12 @@
 	import Button from './components/Button.svelte'
 	import { PlayIcon, PauseIcon, RestartIcon, NewIcon } from './components/icons'
 	import { createGameBoard, updateGameBoard, isEvolutionOver, getBackgroundColor } from './utils'
-	import type { GameBoard } from './global'
+	import type { GameBoard, EvolutionOver } from './global'
 	import { Emojis } from './enums'
 
 	const BOARD_LENGTH = 12
 	let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
-	let evolutionOver = false
+	let evolutionOver: EvolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
 
@@ -18,9 +18,13 @@
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
 		// evolution has ended when gameboards cease to differ
-		if (isEvolutionOver(newGameBoard, gameBoard)) {
-			evolutionOver = true
+		evolutionOver = isEvolutionOver({
+			oldGameBoard: gameBoard,
+			newGameBoard,
+			generations
+		})
 
+		if (evolutionOver) {
 			pauseEvolution()
 			return
 		}
@@ -79,9 +83,12 @@
 		</div>
 	</div>
 	
-	<p class="mt-8 text-gray-200" class:font-bold={evolutionOver}>
-		{evolutionOver ? 'This experiment survived ' : ''}
-		{generations} generation{generations > 1 ? 's' : ''}
+	<p class="mt-8 text-gray-200" class:italic={evolutionOver}>
+		{#if evolutionOver}
+			{evolutionOver.message}
+		{:else}
+			{generations} generation{generations > 1 ? 's' : ''}
+		{/if}
 	</p>
 	
 	<div class="my-8">

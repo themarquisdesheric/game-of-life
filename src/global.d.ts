@@ -8,3 +8,4 @@ export type Cell = {
 
 export type Row = Cell[]
 export type GameBoard = Row[]
+export type EvolutionOver = false | { message: string}

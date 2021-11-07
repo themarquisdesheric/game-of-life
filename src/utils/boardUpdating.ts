@@ -124,16 +124,71 @@ export const updateGameBoard = (prevGameBoard: GameBoard) => {
   return newGameBoard
 }
 
-const removeAgeInGenerations = (gameBoard: GameBoard) =>
-  gameBoard.map(row =>
-    row.map(cell => ({
-      emoji: cell.emoji
-    })
-  ))
+const removeAgeInGenerationsAndFlagCells = (gameBoard: GameBoard, checkForNonWizards = false) => {
+  let nonWizardFound = false
+  let liveCellsRemaining = false
 
-export const isEvolutionOver = (gameboardA: GameBoard, gameboardB: GameBoard) => {
-  const gameBoardAWithoutAgeInGenerations = removeAgeInGenerations(gameboardA)
-  const gameBoardBWithoutAgeInGenerations = removeAgeInGenerations(gameboardB)
+  const newGameBoard = gameBoard.map(row => 
+    row.reduce(
+      (accumulator: { emoji: Emojis }[], cell: Cell) => {
+        if (checkForNonWizards && isAlive(cell)) {
+          if (cell.emoji !== Emojis.wizard) {
+            nonWizardFound = true
+          }
+          
+          if (!liveCellsRemaining) {
+            liveCellsRemaining = true
+          }
+        }
 
-  return _isEqual(gameBoardAWithoutAgeInGenerations, gameBoardBWithoutAgeInGenerations)
+        accumulator.push({
+          emoji: cell.emoji,
+        })
+
+        return accumulator
+      }, []
+    )
+  )
+
+  return {
+    gameBoard: newGameBoard,
+    nonWizardFound,
+    liveCellsRemaining,
+  }
+}
+
+const messages = {
+  getNoLiveCellsMessage: (generations: number) =>
+    `Conditions were not right for this population to exist. They perished after ${generations} generations`,
+  boardsAreEqual: 'This population has achieved complete wizardhood. Their numbers remain constant, their ranks immortal.',
+}
+
+type isEvolutionOverArgs = {
+  newGameBoard: GameBoard,
+  oldGameBoard: GameBoard,
+  generations: number,
+}
+
+export const isEvolutionOver = ({ newGameBoard, oldGameBoard, generations }: isEvolutionOverArgs) => {
+  const {
+    gameBoard: newGameBoardNoAgeInGenerations,
+    nonWizardFound,
+    liveCellsRemaining,
+  } = removeAgeInGenerationsAndFlagCells(newGameBoard, true)
+  
+  if (!liveCellsRemaining) return {
+    message: messages.getNoLiveCellsMessage(generations)
+  }
+  // let evolution continue until remaining living cells have evolved into wizards
+  if (nonWizardFound) return false
+
+  const { gameBoard: oldGameBoardNoAgeInGenerations } = removeAgeInGenerationsAndFlagCells(oldGameBoard)
+
+  const boardsAreEqual = _isEqual(oldGameBoardNoAgeInGenerations, newGameBoardNoAgeInGenerations)
+
+  if (boardsAreEqual) return {
+    message: messages.boardsAreEqual
+  }
+  
+  return false
 }
