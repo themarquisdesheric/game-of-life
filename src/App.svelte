@@ -61,11 +61,11 @@
 </script>
 
 <main class="min-h-screen flex flex-col justify-center items-center text-center bg-gray-800">
-	<div class="game-board-wrapper rounded-3xl p-12 bg-gray-200">
+	<div class="game-board-wrapper rounded-3xl bg-gray-200">
 		<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px bg-gray-800 border border-gray-800">
 			{#each gameBoard as row}
 				{#each row as cell}
-					<span class="cell w-12 h-12 text-5xl {cell.ageInGenerations ? getBackgroundColor(cell.emoji) : 'bg-gray-200'}">
+					<span class="cell {cell.ageInGenerations ? getBackgroundColor(cell.emoji) : 'bg-gray-200'}">
 						{#if cell.emoji === Emojis.dead}
 							<span class="opacity-75">
 								{cell.emoji}
@@ -118,11 +118,47 @@
 	}
 
 	.cell {
-		line-height: 3rem;
+		line-height: 1.75rem;
+		width: 1.75rem;
+		height: 1.75rem;
+		font-size: 1.3125rem;
 	}
 
 	svg {
 		width: 1rem;
     display: inline-block;
+	}
+
+	@media (min-width: 400px) {
+		.cell {
+			line-height: 2rem;
+			width: 2rem;
+			height: 2rem;
+			font-size: 1.5rem;
+		}
+	}
+
+	@media (min-width: 500px) {
+		.game-board-wrapper {
+			padding: 3rem;
+		}
+	}
+
+	@media (min-width: 700px) {
+		.cell {
+			line-height: 2.5rem;
+			width: 2.5rem;
+			height: 2.5rem;
+			font-size: 1.875rem;
+		}
+	}
+
+	@media (min-height: 815px) {
+		.cell {
+			line-height: 3rem;
+			width: 3rem;
+			height: 3rem;
+			font-size: 2.25rem;
+		}
 	}
 </style>
