@@ -12,6 +12,7 @@
 	let evolutionOver: EvolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
+	let emojiMode = true
 
 	$: gameBoard = initialGameBoard
 
@@ -69,13 +70,15 @@
 		<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px bg-gray-800 border border-gray-800">
 			{#each gameBoard as row}
 				{#each row as cell}
-					<span class="cell {cell.ageInGenerations ? getBackgroundColor(cell.emoji) : 'bg-gray-200'}">
-						{#if cell.emoji === Emojis.dead}
-							<span class="opacity-75">
+					<span class="cell {cell.ageInGenerations ? emojiMode ? getBackgroundColor(cell.emoji) : 'bg-gradient-to-br from-gray-400  to-gray-600' : 'bg-gray-200'}">
+						{#if emojiMode}
+							{#if cell.emoji === Emojis.dead}
+								<span class="opacity-75">
+									{cell.emoji}
+								</span>
+							{:else if cell.emoji}
 								{cell.emoji}
-							</span>
-						{:else if cell.emoji}
-							{cell.emoji}
+							{/if}
 						{/if}
 					</span>
 				{/each}
