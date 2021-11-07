@@ -2,10 +2,10 @@
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
 	import Button from './components/Button.svelte'
+	import Cell from './components/Cell.svelte'
 	import { PlayIcon, PauseIcon, RestartIcon, NewIcon } from './components/icons'
-	import { createGameBoard, updateGameBoard, isEvolutionOver, getBackgroundColor } from './utils'
+	import { createGameBoard, updateGameBoard, isEvolutionOver } from './utils'
 	import type { GameBoard, EvolutionOver } from './global'
-	import { Emojis } from './enums'
 
 	const BOARD_LENGTH = 12
 	let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
@@ -70,17 +70,7 @@
 		<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px bg-gray-800 border border-gray-800">
 			{#each gameBoard as row}
 				{#each row as cell}
-					<span class="cell {cell.ageInGenerations ? emojiMode ? getBackgroundColor(cell.emoji) : 'bg-gradient-to-br from-gray-400  to-gray-600' : 'bg-gray-200'}">
-						{#if emojiMode}
-							{#if cell.emoji === Emojis.dead}
-								<span class="opacity-75">
-									{cell.emoji}
-								</span>
-							{:else if cell.emoji}
-								{cell.emoji}
-							{/if}
-						{/if}
-					</span>
+					<Cell {cell} {emojiMode} />
 				{/each}
 			{/each}
 		</div>
@@ -127,48 +117,14 @@
 		width: fit-content;
 	}
 
-	.cell {
-		line-height: 1.75rem;
-		width: 1.75rem;
-		height: 1.75rem;
-		font-size: 1.3125rem;
-	}
-
 	svg {
 		width: 1rem;
     display: inline-block;
 	}
 
-	@media (min-width: 400px) {
-		.cell {
-			line-height: 2rem;
-			width: 2rem;
-			height: 2rem;
-			font-size: 1.5rem;
-		}
-	}
-
 	@media (min-width: 500px) {
 		.game-board-wrapper {
 			padding: 3rem;
-		}
-	}
-
-	@media (min-width: 700px) {
-		.cell {
-			line-height: 2.5rem;
-			width: 2.5rem;
-			height: 2.5rem;
-			font-size: 1.875rem;
-		}
-	}
-
-	@media (min-height: 815px) {
-		.cell {
-			line-height: 3rem;
-			width: 3rem;
-			height: 3rem;
-			font-size: 2.25rem;
 		}
 	}
 </style>
