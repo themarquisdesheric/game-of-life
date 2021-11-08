@@ -4,9 +4,7 @@ import { Emojis } from '../enums'
 import { createNewCell, createDeadCell } from './boardCreation'
 
 export const isAlive = (cell: Cell) =>
-  cell !== undefined &&
-  cell.emoji !== Emojis.dead &&
-  cell.emoji !== Emojis.empty
+  cell !== undefined && cell.ageInGenerations
 
 type getNeighborCountFromRowArgs = {
   row: Row,
@@ -124,20 +122,37 @@ export const updateGameBoard = (prevGameBoard: GameBoard) => {
   return newGameBoard
 }
 
-const removeAgeInGenerationsAndFlagCells = (gameBoard: GameBoard, checkForNonWizards = false) => {
+type removeAgeInGenerationsAndFlagCellsArgs = {
+  gameBoard: GameBoard,
+  checkForNonWizards?: boolean,
+  emojiMode: boolean,
+}
+
+const removeAgeInGenerationsAndFlagCells = ({ gameBoard, checkForNonWizards = false, emojiMode }: removeAgeInGenerationsAndFlagCellsArgs) => {
   let nonWizardFound = false
   let liveCellsRemaining = false
 
   const newGameBoard = gameBoard.map(row => 
     row.reduce(
       (accumulator: { emoji: Emojis }[], cell: Cell) => {
-        if (checkForNonWizards && isAlive(cell)) {
+        const isCellAlive = isAlive(cell)
+
+        if (!liveCellsRemaining && isCellAlive) {
+          liveCellsRemaining = true
+        }
+
+        if (!emojiMode) {
+          accumulator.push({
+            // retaining emoji structure for subsequent board comparison
+            emoji: isCellAlive ? Emojis.baby : Emojis.empty,
+          })
+
+          return accumulator
+        }
+        
+        if (checkForNonWizards && isCellAlive) {
           if (cell.emoji !== Emojis.wizard) {
             nonWizardFound = true
-          }
-          
-          if (!liveCellsRemaining) {
-            liveCellsRemaining = true
           }
         }
 
@@ -157,37 +172,49 @@ const removeAgeInGenerationsAndFlagCells = (gameBoard: GameBoard, checkForNonWiz
   }
 }
 
-const messages = {
-  getNoLiveCellsMessage: (generations: number) =>
-    `Conditions were not right for this population to exist. They perished after ${generations} generations`,
-  boardsAreEqual: 'This population has achieved complete wizardhood. Their numbers remain constant, their ranks immortal.',
+export const messages = {
+  evolutionOver: (generations: number, emojiMode: boolean) => {
+    // emoji mode has an extra generation to show skull emoji
+    generations = emojiMode ? generations : generations - 1
+
+    return `Conditions were not right for this population to exist. They perished after ${generations} generations.`
+  },
+  generations: (generations: number) =>
+    `${generations} generation${generations > 1 ? 's' : ''}`,
+  prosperity: (generations: number) =>
+    `It took ${generations} generations for this population to achieve prosperity. Their numbers remain constant, their ranks immortal.`,
+  completeWizardhood: 'This population has achieved complete wizardhood. Their numbers remain constant, their ranks immortal.',
 }
 
 type isEvolutionOverArgs = {
   newGameBoard: GameBoard,
   oldGameBoard: GameBoard,
   generations: number,
+  emojiMode: boolean,
 }
 
-export const isEvolutionOver = ({ newGameBoard, oldGameBoard, generations }: isEvolutionOverArgs) => {
+export const isEvolutionOver = ({ newGameBoard, oldGameBoard, generations, emojiMode }: isEvolutionOverArgs) => {
   const {
     gameBoard: newGameBoardNoAgeInGenerations,
     nonWizardFound,
     liveCellsRemaining,
-  } = removeAgeInGenerationsAndFlagCells(newGameBoard, true)
-  
+  } = removeAgeInGenerationsAndFlagCells({
+    gameBoard: newGameBoard,
+    checkForNonWizards: true,
+    emojiMode
+  })
+
   if (!liveCellsRemaining) return {
-    message: messages.getNoLiveCellsMessage(generations)
+    message: messages.evolutionOver(generations, emojiMode)
   }
-  // let evolution continue until remaining living cells have evolved into wizards
-  if (nonWizardFound) return false
+  // if in emoji mode, let evolution continue until remaining living cells have evolved into wizards
+  if (emojiMode && nonWizardFound) return false
 
-  const { gameBoard: oldGameBoardNoAgeInGenerations } = removeAgeInGenerationsAndFlagCells(oldGameBoard)
-
+  const { gameBoard: oldGameBoardNoAgeInGenerations } = removeAgeInGenerationsAndFlagCells({ gameBoard: oldGameBoard, emojiMode })
   const boardsAreEqual = _isEqual(oldGameBoardNoAgeInGenerations, newGameBoardNoAgeInGenerations)
 
   if (boardsAreEqual) return {
-    message: messages.boardsAreEqual
+    message: emojiMode ? messages.completeWizardhood : messages.prosperity(generations)
   }
   
   return false

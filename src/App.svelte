@@ -4,7 +4,7 @@
 	import Button from './components/Button.svelte'
 	import Cell from './components/Cell.svelte'
 	import { PlayIcon, PauseIcon, RestartIcon, NewIcon } from './components/icons'
-	import { createGameBoard, updateGameBoard, isEvolutionOver } from './utils'
+	import { createGameBoard, updateGameBoard, isEvolutionOver, messages } from './utils'
 	import type { GameBoard, EvolutionOver } from './global'
 
 	const BOARD_LENGTH = 12
@@ -12,7 +12,7 @@
 	let evolutionOver: EvolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
-	let emojiMode = true
+	let emojiMode = false
 
 	$: gameBoard = initialGameBoard
 
@@ -22,12 +22,12 @@
 		evolutionOver = isEvolutionOver({
 			oldGameBoard: gameBoard,
 			newGameBoard,
-			generations
+			generations,
+			emojiMode,
 		})
 
 		if (evolutionOver) {
 			pauseEvolution()
-			return
 		}
 
 		generations += 1
@@ -80,7 +80,7 @@
 		{#if evolutionOver}
 			{evolutionOver.message}
 		{:else}
-			{generations} generation{generations > 1 ? 's' : ''}
+			{messages.generations(generations)}
 		{/if}
 	</p>
 	
