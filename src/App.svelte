@@ -2,6 +2,7 @@
 	import { onDestroy } from 'svelte'
 	import { interval } from './stores'
 	import Button from './components/Button.svelte'
+	import Toggle from './components/Toggle.svelte'
 	import Cell from './components/Cell.svelte'
 	import { PlayIcon, PauseIcon, RestartIcon, NewIcon } from './components/icons'
 	import { createGameBoard, updateGameBoard, isEvolutionOver, messages } from './utils'
@@ -9,16 +10,17 @@
 
 	const BOARD_LENGTH = 12
 	let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
+	let gameBoard = initialGameBoard
 	let evolutionOver: EvolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
 	let emojiMode = false
-
-	$: gameBoard = initialGameBoard
+	
+	console.log('emojiMode', emojiMode);
 
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
-		// evolution has ended when gameboards cease to differ
+
 		evolutionOver = isEvolutionOver({
 			oldGameBoard: gameBoard,
 			newGameBoard,
@@ -60,52 +62,60 @@
 		clearInterval($interval)
 	}
 
+	const toggleEmojiMode = () => {
+		emojiMode = !emojiMode
+	}
+
 	playEvolution()
 
 	onDestroy(() => clearInterval($interval))
 </script>
 
-<main class="min-h-screen flex flex-col justify-center items-center text-center bg-gray-800">
-	<div class="game-board-wrapper rounded-3xl bg-gray-200">
-		<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px bg-gray-800 border border-gray-800">
-			{#each gameBoard as row}
-				{#each row as cell}
-					<Cell {cell} {emojiMode} />
+<main class="min-h-screen bg-gray-800">
+	<div class="content-wrapper flex flex-col justify-center items-center mx-auto pt-8 text-center">
+		<div class="game-board-wrapper rounded-3xl bg-gray-200">
+			<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px bg-gray-800 border border-gray-800">
+				{#each gameBoard as row}
+					{#each row as cell}
+						<Cell {cell} {emojiMode} />
+					{/each}
 				{/each}
-			{/each}
+			</div>
 		</div>
-	</div>
 	
-	<p class="mt-8 text-gray-200" class:italic={evolutionOver}>
-		{#if evolutionOver}
-			{evolutionOver.message}
-		{:else}
-			{messages.generations(generations)}
-		{/if}
-	</p>
-	
-	<div class="my-8">
-		{#if !evolutionOver}
-			{#if evolutionPaused}
-				<Button onClick={playEvolution}>
-					<PlayIcon />&nbsp;
-					play
-				</Button>
+		<p class="message mt-8 text-gray-200" class:italic={evolutionOver}>
+			{#if evolutionOver}
+				{evolutionOver.message}
 			{:else}
-				<Button onClick={pauseEvolution}>
-					<PauseIcon />&nbsp;
-					pause
-				</Button>
+				{messages.generations(generations)}
 			{/if}
-		{/if}
-		<Button onClick={replayEvolution}>
-			<RestartIcon />&nbsp;
-			replay
-		</Button>
-		<Button onClick={newEvolution} classes="mr-0">
-			<NewIcon />
-			new
-		</Button>
+		</p>
+	
+		<div class="mt-8 mb-6">
+			{#if !evolutionOver}
+				{#if evolutionPaused}
+					<Button onClick={playEvolution}>
+						<PlayIcon />&nbsp;
+						play
+					</Button>
+				{:else}
+					<Button onClick={pauseEvolution}>
+						<PauseIcon />&nbsp;
+						pause
+					</Button>
+				{/if}
+			{/if}
+			<Button onClick={replayEvolution}>
+				<RestartIcon />&nbsp;
+				replay
+			</Button>
+			<Button onClick={newEvolution}>
+				<NewIcon />
+				new
+			</Button>
+		</div>
+	
+		<Toggle {emojiMode} {toggleEmojiMode} />
 	</div>
 </main>
 
@@ -113,8 +123,16 @@
   @tailwind base;
   @tailwind utilities;
 	
+	.content-wrapper {
+		width: fit-content;
+	}
+
 	.game-board {
 		width: fit-content;
+	}
+
+	.message {
+		max-width: 345px;
 	}
 
 	svg {

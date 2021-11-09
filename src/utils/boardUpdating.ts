@@ -184,6 +184,7 @@ export const messages = {
   prosperity: (generations: number) =>
     `It took ${generations} generations for this population to achieve prosperity. Their numbers remain constant, their ranks immortal.`,
   completeWizardhood: 'This population has achieved complete wizardhood. Their numbers remain constant, their ranks immortal.',
+  infiniteLoop: 'This population has fallen into an infinite loop.',
 }
 
 type isEvolutionOverArgs = {
@@ -211,6 +212,7 @@ export const isEvolutionOver = ({ newGameBoard, oldGameBoard, generations, emoji
   if (emojiMode && nonWizardFound) return false
 
   const { gameBoard: oldGameBoardNoAgeInGenerations } = removeAgeInGenerationsAndFlagCells({ gameBoard: oldGameBoard, emojiMode })
+  // evolution has ended when gameboards cease to differ
   const boardsAreEqual = _isEqual(oldGameBoardNoAgeInGenerations, newGameBoardNoAgeInGenerations)
 
   if (boardsAreEqual) return {
