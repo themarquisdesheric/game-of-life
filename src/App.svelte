@@ -16,11 +16,9 @@
 	let generations = 1
 	let emojiMode = false
 	
-	console.log('emojiMode', emojiMode);
-
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
-
+		
 		evolutionOver = isEvolutionOver({
 			oldGameBoard: gameBoard,
 			newGameBoard,
@@ -74,7 +72,10 @@
 <main class="min-h-screen bg-gray-800">
 	<div class="content-wrapper flex flex-col justify-center items-center mx-auto pt-8 text-center">
 		<div class="game-board-wrapper rounded-3xl bg-gray-200">
-			<div class="game-board grid grid-rows-{BOARD_LENGTH} grid-cols-{BOARD_LENGTH} gap-x-px gap-y-px bg-gray-800 border border-gray-800">
+			<div
+				class="game-board grid gap-x-px gap-y-px bg-gray-800 border border-gray-800"
+				style="--board-length: {BOARD_LENGTH};"
+			>
 				{#each gameBoard as row}
 					{#each row as cell}
 						<Cell {cell} {emojiMode} />
@@ -129,6 +130,7 @@
 
 	.game-board {
 		width: fit-content;
+		grid-template-columns: repeat(var(--board-length), minmax(0, 1fr));
 	}
 
 	.message {
