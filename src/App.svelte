@@ -1,32 +1,38 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte'
-	import { interval } from './stores'
+	import { interval, previousGameBoards } from './stores'
 	import Button from './components/Button.svelte'
 	import Toggle from './components/Toggle.svelte'
 	import Cell from './components/Cell.svelte'
 	import { PlayIcon, PauseIcon, RestartIcon, NewIcon } from './components/icons'
-	import { createGameBoard, updateGameBoard, isEvolutionOver, messages } from './utils'
+	import { createGameBoard, updateGameBoard, removeAgeInGenerationsAndFlagCells, isEvolutionOver, messages } from './utils'
 	import type { GameBoard, EvolutionOver } from './global'
 
+	import boardInfinite from './boardInfinite'
+
 	const BOARD_LENGTH = 12
-	let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
+	// let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
+	let initialGameBoard: GameBoard = boardInfinite
 	let gameBoard = initialGameBoard
 	let evolutionOver: EvolutionOver = false
 	let evolutionPaused = false
 	let generations = 1
 	let emojiMode = false
-	
+
+
 	const processNextTick = () => {
 		const newGameBoard = updateGameBoard(gameBoard)
 		
 		evolutionOver = isEvolutionOver({
-			oldGameBoard: gameBoard,
+			previousGameBoardsStore: previousGameBoards,
+			previousGameBoards: $previousGameBoards,
 			newGameBoard,
 			generations,
 			emojiMode,
 		})
 
-		if (evolutionOver) {
+		// infinite loop should be allowed to continue for demonstration purposes
+		if (evolutionOver && evolutionOver.message !== messages.infiniteLoop) {
 			pauseEvolution()
 		}
 
@@ -64,6 +70,12 @@
 		emojiMode = !emojiMode
 	}
 
+	const { gameBoard: initialGameBoardNoAgeInGenerations } = removeAgeInGenerationsAndFlagCells({
+		gameBoard: initialGameBoard,
+		emojiMode,
+	})
+
+	previousGameBoards.add(initialGameBoardNoAgeInGenerations)
 	playEvolution()
 
 	onDestroy(() => clearInterval($interval))
@@ -93,7 +105,7 @@
 		</p>
 	
 		<div class="mt-8 mb-6">
-			{#if !evolutionOver}
+			{#if !evolutionOver || evolutionOver.message === messages.infiniteLoop}
 				{#if evolutionPaused}
 					<Button onClick={playEvolution}>
 						<PlayIcon />&nbsp;

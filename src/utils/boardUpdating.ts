@@ -1,5 +1,5 @@
 import _isEqual from 'lodash.isequal'
-import type { GameBoard, Row, Cell } from '../global'
+import type { GameBoard, Row, Cell, ComparisonCell, ComparisonGameBoard } from '../global'
 import { Emojis } from '../enums'
 import { createNewCell, createDeadCell } from './boardCreation'
 
@@ -128,13 +128,24 @@ type removeAgeInGenerationsAndFlagCellsArgs = {
   emojiMode: boolean,
 }
 
-const removeAgeInGenerationsAndFlagCells = ({ gameBoard, checkForNonWizards = false, emojiMode }: removeAgeInGenerationsAndFlagCellsArgs) => {
+type removeAgeInGenerationsAndFlagCellsReturnType = {
+  gameBoard: ComparisonGameBoard,
+  nonWizardFound: boolean,
+  liveCellsRemaining: boolean,
+}
+
+export const removeAgeInGenerationsAndFlagCells = ({
+  gameBoard,
+  checkForNonWizards = false,
+  emojiMode
+}: removeAgeInGenerationsAndFlagCellsArgs
+): removeAgeInGenerationsAndFlagCellsReturnType => {
   let nonWizardFound = false
   let liveCellsRemaining = false
 
   const newGameBoard = gameBoard.map(row => 
     row.reduce(
-      (accumulator: { emoji: Emojis }[], cell: Cell) => {
+      (accumulator: ComparisonCell[], cell: Cell) => {
         const isCellAlive = isAlive(cell)
 
         if (!liveCellsRemaining && isCellAlive) {
@@ -189,12 +200,16 @@ export const messages = {
 
 type isEvolutionOverArgs = {
   newGameBoard: GameBoard,
-  oldGameBoard: GameBoard,
+  previousGameBoardsStore: {
+    subscribe: (this: void, run: () => {}, invalidate?: () => {}) => () => {};
+    add: (gameBoard: ComparisonGameBoard) => void;
+  },
+  previousGameBoards: ComparisonGameBoard[],
   generations: number,
   emojiMode: boolean,
 }
 
-export const isEvolutionOver = ({ newGameBoard, oldGameBoard, generations, emojiMode }: isEvolutionOverArgs) => {
+export const isEvolutionOver = ({ newGameBoard, previousGameBoardsStore, previousGameBoards, generations, emojiMode }: isEvolutionOverArgs) => {
   const {
     gameBoard: newGameBoardNoAgeInGenerations,
     nonWizardFound,
@@ -208,12 +223,22 @@ export const isEvolutionOver = ({ newGameBoard, oldGameBoard, generations, emoji
   if (!liveCellsRemaining) return {
     message: messages.evolutionOver(generations, emojiMode)
   }
+
+  const [nMinusTwoGameBoard, nMinusOneGameBoard] = previousGameBoards
+  
+  previousGameBoardsStore.add(newGameBoardNoAgeInGenerations)
+  
   // if in emoji mode, let evolution continue until remaining living cells have evolved into wizards
   if (emojiMode && nonWizardFound) return false
-
-  const { gameBoard: oldGameBoardNoAgeInGenerations } = removeAgeInGenerationsAndFlagCells({ gameBoard: oldGameBoard, emojiMode })
+  
   // evolution has ended when gameboards cease to differ
-  const boardsAreEqual = _isEqual(oldGameBoardNoAgeInGenerations, newGameBoardNoAgeInGenerations)
+  const boardsAreEqual = _isEqual(nMinusOneGameBoard, newGameBoardNoAgeInGenerations)
+  // one form of infinite loop is recognized when the n - 2 and n gameboards match
+  const inInfiniteLoop = _isEqual(nMinusTwoGameBoard, newGameBoardNoAgeInGenerations)
+
+  if (inInfiniteLoop) return {
+    message: messages.infiniteLoop,
+  }
 
   if (boardsAreEqual) return {
     message: emojiMode ? messages.completeWizardhood : messages.prosperity(generations)
