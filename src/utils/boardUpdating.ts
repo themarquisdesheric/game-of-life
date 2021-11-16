@@ -184,12 +184,8 @@ export const removeAgeInGenerationsAndFlagCells = ({
 }
 
 export const messages = {
-  evolutionOver: (generations: number, emojiMode: boolean) => {
-    // emoji mode has an extra generation to show skull emoji
-    generations = emojiMode ? generations : generations - 1
-
-    return `Conditions were not right for this population to exist. They perished after ${generations} generations.`
-  },
+  evolutionOver: (generations: number, emojiMode: boolean) =>
+    `Conditions were not right for this population to exist. They perished after ${generations} generations.`,
   generations: (generations: number) =>
     `${generations} generation${generations > 1 ? 's' : ''}`,
   prosperity: (generations: number) =>
