@@ -197,7 +197,7 @@ export const messages = {
 type isEvolutionOverArgs = {
   newGameBoard: GameBoard,
   previousGameBoardsStore: {
-    subscribe: (this: void, run: () => {}, invalidate?: () => {}) => () => {};
+    subscribe: (this: void, run: () => {}, invalidate?: () => {}) => {};
     add: (gameBoard: ComparisonGameBoard) => void;
   },
   previousGameBoards: ComparisonGameBoard[],
