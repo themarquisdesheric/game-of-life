@@ -8,11 +8,8 @@
 	import { createGameBoard, updateGameBoard, removeAgeInGenerationsAndFlagCells, isEvolutionOver, messages } from './utils'
 	import type { GameBoard, EvolutionOver } from './global'
 
-	import boardInfinite from './boardInfinite'
-
 	const BOARD_LENGTH = 12
-	// let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
-	let initialGameBoard: GameBoard = boardInfinite
+	let initialGameBoard: GameBoard = createGameBoard(BOARD_LENGTH)
 	let gameBoard = initialGameBoard
 	let evolutionOver: EvolutionOver = false
 	let evolutionPaused = false
