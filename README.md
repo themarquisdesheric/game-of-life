@@ -4,7 +4,7 @@ This is a small project I made as I "explored" evolution through [Conway's Game 
 
 *It begins life as a baby, and matures into a new state every five generations, ultimately becoming a wizard if it survives long enough, because why not?*
 
-| Age | Cell |
+| Generations | Cell Emoji |
 | --- | --- |
 | 1 | 👶🏻 |
 | 6 | 👨🏻 |
