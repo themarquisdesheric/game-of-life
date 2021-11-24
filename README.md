@@ -11,5 +11,5 @@ This is a small project I made as I "explored" evolution through [Conway's Game 
 | 11 | 👴🏻 |
 | 16 | 🧙‍♂️ |
 
-Check it out here: https://game-of-life-black-five.vercel.app/
+Check it out here: https://game-of-life-black-five.vercel.app
 
