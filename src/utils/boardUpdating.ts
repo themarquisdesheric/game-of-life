@@ -41,7 +41,7 @@ type getNeighborCountArgs = {
   x: number
 }
 
-const getNeighborCount = ({
+export const getNeighborCount = ({
   gameBoard,
   y: targetRowIndex,
   x: targetCellIndex,

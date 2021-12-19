@@ -7,7 +7,7 @@ export const createNewCell = () => ({
   ageInGenerations: 1,
 })
 
-const createEmptyCell = () => ({
+export const createEmptyCell = () => ({
   emoji: Emojis.empty,
   ageInGenerations: 0,
 })
@@ -22,10 +22,10 @@ const populateCell = () =>
     ? createNewCell()
     : createEmptyCell()
 
-const createRow = (length: number) => 
+export const createRow = (length: number, empty = false) => 
   new Array(length)
     .fill(createEmptyCell())
-    .map(populateCell)
+    .map(empty ? createEmptyCell : populateCell)
 
 export const createGameBoard = (length = 5) =>
   new Array(length)
