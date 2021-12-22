@@ -1,0 +1,283 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`updateGameBoard 🐣 any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction 1`] = `
+Array [
+  Array [
+    Object {
+      "ageInGenerations": 1,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+]
+`;
+
+exports[`updateGameBoard 💀 any live cell with fewer than two live neighbours dies, as if by underpopulation (one neighbor) 1`] = `
+Array [
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "💀",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "💀",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+]
+`;
+
+exports[`updateGameBoard 💀 any live cell with fewer than two live neighbours dies, as if by underpopulation (zero neighbors) 1`] = `
+Array [
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "💀",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+]
+`;
+
+exports[`updateGameBoard 💀 any live cell with more than three live neighbours dies, as if by overpopulation 1`] = `
+Array [
+  Array [
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "💀",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "💀",
+    },
+    Object {
+      "ageInGenerations": 1,
+      "emoji": "👶🏻",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+]
+`;
+
+exports[`updateGameBoard 😀 any live cell with two or three live neighbours lives on to the next generation (two neighbors) 1`] = `
+Array [
+  Array [
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 1,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+]
+`;
+
+exports[`updateGameBoard 😀 any live cell with two or three live neighbours lives on to the next generation (two neighbors) 2`] = `
+Array [
+  Array [
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 1,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 2,
+      "emoji": "👶🏻",
+    },
+    Object {
+      "ageInGenerations": 1,
+      "emoji": "👶🏻",
+    },
+  ],
+  Array [
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+    Object {
+      "ageInGenerations": 0,
+      "emoji": "",
+    },
+  ],
+]
+`;
